@@ -52,7 +52,28 @@ pipeline {
 
         stage('Healthcheck') {
             steps {
-                powershell 'Invoke-WebRequest -UseBasicParsing http://127.0.0.1:7071/health'
+                powershell '''
+                    $healthUrl = 'http://127.0.0.1:7071/health'
+
+                    for ($attempt = 1; $attempt -le 20; $attempt++) {
+                        try {
+                            $response = Invoke-WebRequest -UseBasicParsing -TimeoutSec 2 $healthUrl
+                            if ($response.StatusCode -eq 200) {
+                                Write-Host "Healthcheck passed on attempt $attempt."
+                                exit 0
+                            }
+                        } catch {
+                            Write-Host "Healthcheck attempt $attempt failed: $($_.Exception.Message)"
+                        }
+
+                        Start-Sleep -Seconds 2
+                    }
+
+                    Write-Host 'Healthcheck failed. PM2 diagnostics:'
+                    pm2 status aramsamsam
+                    pm2 logs aramsamsam --lines 80 --nostream
+                    exit 1
+                '''
             }
         }
     }

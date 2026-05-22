@@ -250,11 +250,12 @@ app.get('/', async (_req, res) => {
 
 async function init() {
     await storage.init();
-    await loadAllChamps();
 
     console.log(`Using users file: ${USERS_FILE}`);
     console.log(`Using champs dir: ${CHAMPS_DIR}`);
     app.listen(PORT, () => console.log(`LoL champs API running on http://localhost:${PORT}`));
+
+    await loadAllChamps();
 }
 
 module.exports = { app, storage, init };
