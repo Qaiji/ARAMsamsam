@@ -92,6 +92,7 @@ async function reloadAllChamps() {
 
         allChamps.sort((a, b) => a.name.localeCompare(b.name));
         allChampsCache = allChamps;
+        await saveFallbackChamps(allChamps);
     } catch (error) {
         console.error('Failed loading all champs from Data Dragon:', error.message);
         await loadFallbackChamps();
@@ -128,6 +129,15 @@ async function loadFallbackChamps() {
     } catch (error) {
         console.error('Failed loading fallback champs:', error.message);
         allChampsCache = [];
+    }
+}
+
+async function saveFallbackChamps(champs) {
+    try {
+        await fs.mkdir(path.dirname(FALLBACK_CHAMPS_FILE), { recursive: true });
+        await fs.writeFile(FALLBACK_CHAMPS_FILE, JSON.stringify(champs, null, 2), 'utf8');
+    } catch (error) {
+        console.error('Failed saving fallback champs:', error.message);
     }
 }
 
