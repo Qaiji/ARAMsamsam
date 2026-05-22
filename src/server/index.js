@@ -73,6 +73,7 @@ async function loadAllChamps() {
 async function reloadAllChamps() {
     try {
         if (process.env.SKIP_DDRAGON === '1') {
+            console.log('Skipping Data Dragon because SKIP_DDRAGON=1.');
             await loadFallbackChamps();
             return;
         }

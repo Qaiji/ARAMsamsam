@@ -44,7 +44,7 @@ pipeline {
         stage('Restart PM2') {
             steps {
                 dir("${env.APP_DIR}") {
-                    bat 'pm2 startOrReload ecosystem.config.cjs --env production'
+                    bat 'pm2 startOrReload ecosystem.config.cjs --env production --update-env'
                     bat 'pm2 save'
                 }
             }
